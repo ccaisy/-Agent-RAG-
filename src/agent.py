@@ -74,18 +74,21 @@ class ReActAgent:
 
             # 模型要调用工具 → 执行 → 自修正检查
             if msg.tool_calls:
+                # 1. 先将 assistant 消息（含 tool_calls）加入历史
+                #    OpenAI API 要求 tool 消息必须紧跟对应的 assistant(tool_calls) 消息
+                messages.append(msg.model_dump())
+
+                # 2. 执行每个工具并将结果加入历史
                 for tc in msg.tool_calls:
                     result = self._execute_tool(tc)
                     self.tool_trace.append(result)
-
-                    # 将工具结果反馈给模型
                     messages.append({
                         "role": "tool",
                         "tool_call_id": tc.id,
                         "content": result.output,
                     })
 
-                # Self-Correction：检查是否需要修正
+                # 3. Self-Correction：追加反思提示，驱动模型自我修正
                 correction_prompt = self._build_correction_prompt()
                 messages.append({"role": "user", "content": correction_prompt})
                 continue
