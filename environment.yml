@@ -11,3 +11,4 @@ dependencies:
       - numpy>=1.24.0        # 向量计算基础库
       - faiss-cpu>=1.7.0     # 本地向量检索（CPU 版本，macOS 友好）
       - requests>=2.31.0     # HTTP 请求
+      - gnureadline>=6.8     # 修复 macOS 终端中文输入回退/光标问题（替代 libedit）

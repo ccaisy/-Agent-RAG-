@@ -5,6 +5,19 @@
 
 import sys
 import argparse
+
+# —— 修复 macOS 终端中文输入回退失效、字符异常问题 ——
+# macOS 上 Python 默认链接 libedit，对多字节字符（中文）支持不佳
+# 优先启用 GNU readline；如果不可用则确保终端编码正确
+try:
+    import readline  # 启用行编辑功能：回退、光标移动、历史记录
+except ImportError:
+    pass  # Windows 或某些环境可能没有 readline，忽略即可
+
+# 确保 stdin/stdout 使用 UTF-8（处理中文输入输出）
+sys.stdin.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
+
 from src.llm_client import LLMClient, quick_chat
 from src.agent import ReActAgent
 from src.tools import ToolExecutor, WEB_SEARCH_TOOL, CODE_EXEC_TOOL
